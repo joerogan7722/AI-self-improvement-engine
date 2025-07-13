@@ -1,0 +1,11 @@
+--- a/src/god_engine/utils.py
++++ b/src/god_engine/utils.py
+@@ -165,6 +165,8 @@
+     """
+     A simple greeting function added by the Self-Improvement Module.
+     # TODO[REF-123]: Add logging to this function.
++    import logging
++    logging.basicConfig(level=logging.INFO)
+     """
+     return (
+         f"Hello, {name}! This function was added by the God Engine's "

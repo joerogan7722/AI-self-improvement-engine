@@ -1,0 +1,23 @@
+# Example configuration for the AI Self-Extending Engine
+code_dir: "."
+memory_path: "_memory_snapshots"
+max_cycles: 3
+goals_path: "goals.json"
+
+generator_model: "gemini-2.5-flash"
+critic_model: "gemini-2.5-flash"
+refiner_model: "gemini-2.5-flash"
+meta_critic_model: "gemini-2.5-flash"
+
+role_sequence:
+  - ProblemIdentificationRole
+  - RefineRole
+  - TestRole
+  - SelfReviewRole
+
+prompts_dir: "prompts"
+
+redact_logs: false
+redaction_config: {}
+
+strategy: null

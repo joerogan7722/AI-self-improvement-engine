@@ -1,0 +1,24 @@
+[
+  {
+    "id": "id",
+    "description": "description",
+    "impact": 1.0,
+    "effort": 1.0,
+    "status": "in_progress",
+    "name": "",
+    "target_file": "",
+    "completion_criteria": "",
+    "patch_logic": ""
+  },
+  {
+    "id": "REF-123",
+    "description": "Add logging to this function.",
+    "impact": 1.0,
+    "effort": 1.0,
+    "status": "pending",
+    "name": "",
+    "target_file": "",
+    "completion_criteria": "",
+    "patch_logic": ""
+  }
+]

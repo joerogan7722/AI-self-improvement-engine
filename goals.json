@@ -1,0 +1,19 @@
+{
+  "goals": [
+    {
+      "id": "initial_setup",
+      "description": "Ensure the core engine's basic file structure (src/core, src/roles, src/config, src/goal_manager, src/snapshot_store, src/model_client) is correctly laid out and initialized. Verify existing files and create missing ones.",
+      "status": "pending"
+    },
+    {
+      "id": "implement_critique_role",
+      "description": "Implement the CritiqueRole based on critique_refine logic.",
+      "status": "pending"
+    },
+    {
+      "id": "implement_refine_role",
+      "description": "Implement the RefineRole based on god_engine and critique_refine logic.",
+      "status": "pending"
+    }
+  ]
+}
