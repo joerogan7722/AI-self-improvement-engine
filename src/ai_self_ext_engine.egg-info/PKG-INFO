@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: ai-self-ext-engine
+Version: 0.1.0
+Summary: An AI-driven self-extending code engine
+Author-email: Your Name <your.email@example.com>
+Project-URL: Homepage, https://github.com/joerogan7722/AI-self-improvement-engine
+Project-URL: Bug Tracker, https://github.com/joerogan7722/AI-self-improvement-engine/issues
+Keywords: AI,self-improvement,code generation,software engineering
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: pydantic
+Requires-Dist: pyyaml
+Requires-Dist: typing_extensions

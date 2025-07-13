@@ -1,0 +1,52 @@
+[project]
+name = "ai-self-ext-engine"
+version = "0.1.0"
+description = "An AI-driven self-extending code engine"
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+dependencies = [
+    "pydantic",
+    "pyyaml",
+    "typing_extensions", # For Literal in Python < 3.8 if needed
+    # Add other dependencies as they become apparent (e.g., httpx for model client, prometheus_client)
+]
+requires-python = ">=3.8"
+readme = "README.md"
+license = { file = "LICENSE" }
+keywords = ["AI", "self-improvement", "code generation", "software engineering"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/joerogan7722/AI-self-improvement-engine"
+"Bug Tracker" = "https://github.com/joerogan7722/AI-self-improvement-engine/issues"
+
+[project.scripts]
+ai-self-ext-engine = "ai_self_ext_engine.cli:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"ai_self_ext_engine" = ["py.typed"]
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true

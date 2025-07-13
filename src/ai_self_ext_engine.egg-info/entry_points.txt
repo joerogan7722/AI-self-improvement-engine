@@ -1,0 +1,2 @@
+[console_scripts]
+ai-self-ext-engine = ai_self_ext_engine.cli:main
