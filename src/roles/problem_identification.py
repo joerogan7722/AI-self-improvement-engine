@@ -2,6 +2,7 @@ from typing import List
 from src.core.role import Role, Context
 from src.core import ModelClient, ModelCallError # Corrected import path
 from src.config import EngineConfig # Assuming EngineConfig has model names
+import re # Import re for regex
 
 class ProblemIdentificationRole(Role):
     def __init__(self, config: EngineConfig, model_client: ModelClient):
@@ -23,7 +24,11 @@ class ProblemIdentificationRole(Role):
                 "Based on the following goal description, "
                 "identify a concise list of technical tasks or 'todos' "
                 "that need to be completed to achieve this goal. "
-                "Return them as a comma-separated list.\n\n"
+                "Return them as a comma-separated list.\n"
+                "IMPORTANT: ONLY identify tasks that involve modifying existing code files or creating new code files with initial content. "
+                "DO NOT include tasks related to creating empty directories, creating empty `__init__.py` files, "
+                "or verifying the existence of directories/files, as these are handled by the engine's initialization logic. "
+                "Focus on tasks that require actual code implementation or modification.\n\n"
                 "Goal: {goal_description}"
             )
             
@@ -36,8 +41,22 @@ class ProblemIdentificationRole(Role):
             
             # Simple parsing for comma-separated list
             todos = [todo.strip() for todo in response_text.split(',') if todo.strip()]
-            context.todos = todos
-            print(f"ProblemIdentificationRole: Identified todos: {todos}")
+            
+            # Re-apply a minimal set of exclusions for safety, primarily to avoid empty __init__.py files
+            filtered_todos = []
+            excluded_patterns = [
+                r"create empty `__init__.py`",
+                r"verify all directories and `__init__.py` files exist",
+                r"create missing core engine subdirectories",
+                r"initialize core engine subdirectories with `__init__.py`"
+            ]
+
+            for todo in todos:
+                if not any(re.search(pattern, todo, re.IGNORECASE) for pattern in excluded_patterns):
+                    filtered_todos.append(todo)
+
+            context.todos = filtered_todos
+            print(f"ProblemIdentificationRole: Identified todos: {filtered_todos}")
 
         except ModelCallError as e:
             print(f"ProblemIdentificationRole: Model call error: {e}")
