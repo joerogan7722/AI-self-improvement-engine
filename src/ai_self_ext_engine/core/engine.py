@@ -2,7 +2,8 @@ from typing import List, Optional, Any, Dict
 from datetime import datetime
 from importlib import import_module
 from .role import Context, Role
-from ..config import MainConfig, RoleConfig
+from .plugin import Plugin # Import Plugin
+from ..config import MainConfig, RoleConfig, PluginConfig # Import PluginConfig
 from pathlib import Path
 import logging
 
@@ -30,8 +31,7 @@ class Engine:
         # and should be handled by the packaging system or user's project setup.
 
         self.roles = self._load_roles(config.roles)
-        # TODO: Implement plugin loading later
-        self.plugins = {}
+        self.plugins = self._load_plugins(config.plugins) # Load plugins
 
     def _load_roles(self, role_configs: List[RoleConfig]) -> List[Role]:
         """
@@ -50,12 +50,28 @@ class Engine:
                 raise # Re-raise to stop execution if a critical role can't be loaded
         return loaded_roles
 
+    def _load_plugins(self, plugin_configs: Dict[str, PluginConfig]) -> Dict[str, Plugin]:
+        """
+        Dynamically loads and instantiates plugins based on the plugin_configs in config.
+        """
+        loaded_plugins: Dict[str, Plugin] = {}
+        for plugin_name, plugin_conf in plugin_configs.items():
+            try:
+                module_path, class_name = plugin_conf.entry_point.rsplit('.', 1)
+                module = import_module(module_path)
+                plugin_class = getattr(module, class_name)
+                loaded_plugins[plugin_name] = plugin_class(self.config) # Assuming plugin constructor takes config
+            except (ImportError, AttributeError, TypeError) as e:
+                self.logger.exception("Error loading plugin '%s' from entry point '%s': %s", plugin_name, plugin_conf.entry_point, e)
+                raise # Re-raise to stop execution if a critical plugin can't be loaded
+        return loaded_plugins
+
     def run_cycles(self):
         """
         Main loop for the self-improvement process.
         """
         self.logger.info("Starting self-improvement engine cycles...")
-
+        
         # Outer loop: Iterate through pending goals
         while True:
             # Initialize context for the current goal iteration
@@ -83,7 +99,7 @@ class Engine:
                 self.logger.info("Starting new attempt for goal '%s'.", context.goal.goal_id)
                 # For a newly started goal, ensure todos are fresh (ProblemIdentification will populate them)
                 context.todos = [] 
-
+            
             # Inner loop: Multiple attempts for the current goal
             for attempt in range(self.config.engine.max_cycles):
                 self.logger.info("\n--- Goal '%s' Attempt %s/%s ---", context.goal.goal_id, attempt + 1, self.config.engine.max_cycles)

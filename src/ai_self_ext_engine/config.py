@@ -23,6 +23,7 @@ class PluginConfig(BaseModel):
 class LoggingConfig(BaseModel):
     level: str = Field("INFO", description="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL).")
     format: str = Field("json", description="Logging output format (json or plain).")
+    log_file: Optional[str] = Field(None, description="Optional path to a log file. If not provided, logs go to stderr.")
 
 class MainConfig(BaseModel):
     """

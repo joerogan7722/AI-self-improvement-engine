@@ -40,23 +40,36 @@ def _setup_logging(log_config: LoggingConfig):
     for handler in root_logger.handlers[:]: # Clear existing handlers
         root_logger.removeHandler(handler)
 
-    handler = logging.StreamHandler(sys.stderr)
-    handler.setLevel(log_level)
+    # Console handler
+    console_handler = logging.StreamHandler(sys.stderr)
+    console_handler.setLevel(log_level)
 
     if log_config.format == "json":
         formatter = JsonFormatter()
     else:
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
-    handler.setFormatter(formatter)
-    root_logger.addHandler(handler)
+    console_handler.setFormatter(formatter)
+    root_logger.addHandler(console_handler)
 
-    logger.info("Logging configured to level '%s' with format '%s'.", log_config.level, log_config.format)
+    # File handler (if log_file is specified)
+    if log_config.log_file:
+        log_file_path = Path(log_config.log_file)
+        log_file_path.parent.mkdir(parents=True, exist_ok=True) # Ensure log directory exists
+        file_handler = logging.FileHandler(log_file_path, encoding='utf-8')
+        file_handler.setLevel(log_level)
+        file_handler.setFormatter(formatter)
+        root_logger.addHandler(file_handler)
+
+    logger.info("Logging configured to level '%s' with format '%s'. Outputting to console and %s.", 
+                log_config.level, log_config.format, log_config.log_file if log_config.log_file else "console only")
 
 def main():
     parser = argparse.ArgumentParser(description="AI Self-Extending Engine")
     parser.add_argument("--config", type=str, default="config/engine_config.yaml",
                         help="Path to the engine configuration file.")
+    parser.add_argument("--verbose", action="store_true", 
+                        help="Enable verbose logging (DEBUG level). Overrides config.")
     args = parser.parse_args()
 
     # Load and validate configuration
@@ -70,6 +83,10 @@ def main():
             config_data = yaml.safe_load(f)
         
         config = MainConfig(**config_data) # Use MainConfig for validation
+
+        # Override log level if --verbose flag is set
+        if args.verbose:
+            config.logging.level = "DEBUG"
 
         # Configure logging as early as possible after config is loaded
         _setup_logging(config.logging)

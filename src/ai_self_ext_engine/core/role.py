@@ -1,10 +1,6 @@
-from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar, Union
+from abc import abstractmethod
+from typing import Any, Dict, List, Optional, TypeVar, Protocol # Import Protocol
 from dataclasses import dataclass, field
-
-# To avoid circular imports, use TYPE_CHECKING for type hints
-if TYPE_CHECKING:
-    from .engine import Context
 
 @dataclass
 class Context:
@@ -22,9 +18,9 @@ class Context:
     should_abort: bool = False
     metadata: Dict[str, Any] = field(default_factory=dict) # For logging additional info
 
-class Role(ABC):
+class Role(Protocol): # Change to Protocol
     """
-    Abstract base class for all roles in the self-improvement loop.
+    Protocol for all roles in the self-improvement loop.
     Each role performs a specific task and updates the Context.
     """
     @abstractmethod
@@ -33,6 +29,5 @@ class Role(ABC):
         Executes the role's logic and returns an updated Context object.
         """
         pass
-
 # Define a type variable for roles to enable type hinting for subclasses
 RoleType = TypeVar('RoleType', bound=Role)

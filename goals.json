@@ -1,1 +1,9 @@
-[]
+{
+  "goals": [
+    {
+      "id": "full_cycle_test",
+      "description": "Run a full critique-refine-test-self-review cycle to verify end-to-end functionality of the refactored engine.",
+      "status": "pending"
+    }
+  ]
+}

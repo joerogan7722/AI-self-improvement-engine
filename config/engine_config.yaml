@@ -1,23 +1,30 @@
-# Example configuration for the AI Self-Extending Engine
-code_dir: "."
-memory_path: "_memory_snapshots"
-max_cycles: 3
-goals_path: "goals.json"
-
-generator_model: "gemini-2.5-flash"
-critic_model: "gemini-2.5-flash"
-refiner_model: "gemini-2.5-flash"
-meta_critic_model: "gemini-2.5-flash"
-
-role_sequence:
-  - ProblemIdentificationRole
-  - RefineRole
-  - TestRole
-  - SelfReviewRole
-
-prompts_dir: "prompts"
-
-redact_logs: false
-redaction_config: {}
-
-strategy: null
+version: 1
+engine:
+  code_dir: ./src
+  max_cycles: 3
+  memory_path: ./memory
+  goals_path: goals.json
+  prompts_dir: prompts
+model:
+  api_key_env: GEMINI_API_KEY
+  model_name: gemini-2.5-flash
+roles:
+  - module: ai_self_ext_engine.roles.problem_identification
+    class: ProblemIdentificationRole
+    prompt_path: prompts/problem_identification.tpl
+  - module: ai_self_ext_engine.roles.refine
+    class: RefineRole
+    prompt_path: prompts/patch_generation.tpl
+  - module: ai_self_ext_engine.roles.test
+    class: TestRole
+    prompt_path: prompts/test_generation.tpl
+  - module: ai_self_ext_engine.roles.self_review
+    class: SelfReviewRole
+    prompt_path: prompts/self_review.tpl
+plugins:
+  python:
+    entry_point: ai_self_ext_engine.plugins.python.PythonPlugin # Placeholder for now
+logging:
+  level: INFO
+  format: json
+  log_file: ./logs/engine.log

@@ -1,9 +1,9 @@
-from abc import ABC, abstractmethod
-from typing import Any, Optional
+from abc import abstractmethod
+from typing import Any, Optional, Protocol # Import Protocol
 
-class Plugin(ABC):
+class Plugin(Protocol): # Change to Protocol
     """
-    Abstract base class for all plugins in the self-extending engine.
+    Protocol for all plugins in the self-extending engine.
     Plugins provide specific capabilities, such as language support or tool integration.
     """
     @abstractmethod
