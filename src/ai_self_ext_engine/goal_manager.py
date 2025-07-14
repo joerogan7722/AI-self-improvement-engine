@@ -60,11 +60,13 @@ class GoalManager:
 
     def next_goal(self) -> Optional[Goal]:
         """Returns the next pending goal, or None if no more pending goals."""
-        while self._current_goal_index < len(self.goals):
-            goal = self.goals[self._current_goal_index]
+        # Find the next pending goal starting from the current index
+        for i in range(self._current_goal_index, len(self.goals)):
+            goal = self.goals[i]
             if goal.status == "pending":
+                self._current_goal_index = i + 1  # Advance the index for the next call
                 return goal
-            self._current_goal_index += 1
+        self._current_goal_index = len(self.goals) # Set index to end if no more pending goals
         return None
 
     def mark_done(self, goal_id: str):

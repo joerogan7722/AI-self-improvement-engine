@@ -23,7 +23,7 @@ roles:
     prompt_path: prompts/self_review.tpl
 plugins:
   python:
-    entry_point: ai_self_ext_engine.plugins.python.PythonPlugin # Placeholder for now
+    entry_point: ai_self_ext_engine.plugins.python.PythonPlugin.PythonPlugin # Corrected entry point
 logging:
   level: INFO
   format: json

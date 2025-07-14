@@ -1,85 +1,84 @@
-from typing import Any, Dict, Optional
+from pathlib import Path
+import json
 from ai_self_ext_engine.core.role import Role, Context
 from ai_self_ext_engine.model_client import ModelClient, ModelCallError
 from ai_self_ext_engine.config import MainConfig
-import subprocess # For git reset
-import os # Import os for os.getcwd()
-import logging # New import
+import subprocess
+import os
+import logging
 
-logger = logging.getLogger(__name__) # New logger
+logger = logging.getLogger(__name__)
 
 class SelfReviewRole(Role):
     """
     Role responsible for evaluating the acceptance of changes based on
-    test results, identified problems, and potentially a meta-critique.
+    a code review from an LLM and test results.
     """
     def __init__(self, config: MainConfig, model_client: ModelClient):
         self.config = config
         self.model_client = model_client
+        self.prompt_template_path = Path(config.engine.prompts_dir) / "self_review.tpl"
 
     def run(self, context: Context) -> Context:
-        if context.should_abort:
-            logger.info("SelfReviewRole: Context aborted. Skipping self-review.")
+        if context.should_abort or not context.patch:
+            logger.info("SelfReviewRole: Context aborted or no patch to review. Skipping self-review.")
             return context
 
-        logger.info("SelfReviewRole: Evaluating changes...")
+        logger.info("SelfReviewRole: Reviewing generated patch...")
 
-        # Step 1: Evaluate based on test results
-        if context.test_results and context.test_results.get("passed") is False:
-            logger.info("SelfReviewRole: Tests failed. Changes are not accepted.")
+        try:
+            # Load prompt template
+            if not self.prompt_template_path.exists():
+                raise FileNotFoundError(f"Prompt template not found at {self.prompt_template_path}")
+            
+            prompt_template = self.prompt_template_path.read_text(encoding="utf-8")
+
+            # Format todos for the prompt
+            todos_formatted = "\n".join([
+                f"- File: {todo.get('file_path', 'N/A')}, Type: {todo.get('change_type', 'modify')}, Description: {todo.get('description', 'No description')}"
+                for todo in context.todos
+            ])
+            
+            prompt = prompt_template.format(
+                todos=todos_formatted,
+                current_code=context.current_code,
+                patch=context.patch
+            )
+            
+            response_text = self.model_client.call_model(
+                self.config.model.model_name,
+                prompt=prompt
+            )
+
+            # Parse the review from the LLM
+            review = json.loads(response_text)
+            patch_accepted = review.get("patch_accepted", False)
+            feedback = review.get("feedback", "No feedback provided.")
+            
+            logger.info("SelfReviewRole: Review feedback: %s", feedback)
+            
+            # Evaluate based on test results and LLM review
+            tests_passed = context.test_results and context.test_results.get("passed", False)
+            
+            if patch_accepted and tests_passed:
+                logger.info("SelfReviewRole: Patch accepted by review and tests passed. Changes are accepted.")
+                context.accepted = True
+            else:
+                logger.info("SelfReviewRole: Patch not accepted or tests failed. Reverting changes.")
+                context.accepted = False
+                self._git_reset_all(os.getcwd())
+                context.should_abort = True
+
+        except (ModelCallError, json.JSONDecodeError, FileNotFoundError) as e:
+            logger.error("SelfReviewRole: Error during self-review: %s", e)
             context.accepted = False
-            self._git_reset_all(os.getcwd()) # Revert changes from project root
-            context.should_abort = True # Abort cycle on failed tests
-            return context
-        elif context.test_results and context.test_results.get("passed") is True:
-            logger.info("SelfReviewRole: Tests passed. Provisionally accepted.")
-            context.accepted = True # Still provisionally, might be overridden by other rules
-        else:
-            logger.info("SelfReviewRole: No test results available or tests not run.")
-            # Decide on default behavior if no tests: provisionally accept or require more info
-            context.accepted = False # Default to not accepted if no tests or inconclusive
-
-        # Step 2: Evaluate acceptance via rules (placeholder for actual RuleEngine integration)
-        # Assuming rule_engine.evaluate would return True/False for acceptance
-        # if self.rule_engine.evaluate(context.goal, context.todos, context.test_results):
-        #     logger.info("SelfReviewRole: Rules engine accepted changes.")
-        #     context.accepted = True
-        # else:
-        #     logger.info("SelfReviewRole: Rules engine rejected changes.")
-        #     context.accepted = False
-        #     self._git_reset_all(context.code_dir)
-        #     context.should_abort = True
-
-        # Step 3: Optional: Meta-critique/Review Analysis (placeholder)
-        # if self.config.meta_critic_model and context.patch:
-        #     try:
-        #         analysis_prompt = self.review_analyzer.get_analysis_prompt(context.patch, context.test_results)
-        #         meta_critique_response = self.model_client.call_model(
-        #             model_name=self.config.meta_critic_model,
-        #             prompt=analysis_prompt
-        #         )
-        #         # Parse meta_critique_response to determine final acceptance
-        #         # For now, let's assume if it contains "REJECT" it's rejected
-        #         if "REJECT" in meta_critique_response.upper():
-        #             logger.info("SelfReviewRole: Meta-critique rejected changes.")
-        #             context.accepted = False
-        #             self._git_reset_all(context.code_dir)
-        #             context.should_abort = True
-        #         else:
-        #             logger.info("SelfReviewRole: Meta-critique accepted changes.")
-        #             context.accepted = True
-        #     except ModelCallError as e:
-        #         logger.error(f"SelfReviewRole: Meta-critique model call error: {e}")
-        #     except Exception as e:
-        #         logger.exception(f"SelfReviewRole: Error during meta-critique analysis: {e}")
-
-
-        if context.accepted:
-            logger.info("SelfReviewRole: Changes are accepted. Marking goal as completed in next step.")
-        else:
-            logger.info("SelfReviewRole: Changes are NOT accepted. Reverting code and aborting cycle.")
-            self._git_reset_all(os.getcwd()) # Revert changes from project root
-            context.should_abort = True # Ensure cycle is aborted if not accepted
+            self._git_reset_all(os.getcwd())
+            context.should_abort = True
+        except Exception as e:
+            logger.exception("SelfReviewRole: An unexpected error occurred: %s", e)
+            context.accepted = False
+            self._git_reset_all(os.getcwd())
+            context.should_abort = True
             
         return context
 

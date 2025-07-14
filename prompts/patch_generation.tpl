@@ -21,4 +21,27 @@ Adhere strictly to the unified diff format, including:
 {todos}
 --- END TODOS ---
 
+--- START LEARNING (Examples of past attempts to learn from) ---
+{learning_examples}
+--- END LEARNING ---
+
+Respond with a unified diff between the *original code* and the *refined code*.
+Only output the diff text, and wrap it as follows:
+
+```diff
+<your diff here>
+```
+
+**Example:**
+```diff
+diff --git a/foo.py b/foo.py
+index 83db48f..bf269f5 100644
+--- a/foo.py
++++ b/foo.py
+@@ -1,4 +1,5 @@
+-print("Hello, world!")
++# Greet the user
++print("Hello, world!")
+```
+
 --- START PATCH (Provide the unified diff here) ---

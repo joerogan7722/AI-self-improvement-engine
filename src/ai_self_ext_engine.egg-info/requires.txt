@@ -1,3 +1,7 @@
 pydantic
 pyyaml
 typing_extensions
+
+[test]
+pytest
+pytest-cov

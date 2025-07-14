@@ -1,0 +1,20 @@
+{
+  "cycle": null,
+  "goal_id": "adopt_dependency_management_tool",
+  "description": "Adopt a dependency management tool (e.g., poetry or pip-tools) to manage dependencies more effectively.",
+  "current_code": "",
+  "todos": [
+    {
+      "file_path": "src/ai_self_ext_engine/package_spec.py",
+      "change_type": "add",
+      "description": "Create a new module to programmatically define the core package dependencies and metadata for the AI Self-Extending Engine, serving as an internal source of truth for future dependency management tool configuration.",
+      "line_start": 1,
+      "line_end": 10
+    }
+  ],
+  "patch": "",
+  "test_results": null,
+  "accepted": false,
+  "should_abort": false,
+  "metadata": {}
+}
