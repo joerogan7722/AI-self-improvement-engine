@@ -5,13 +5,22 @@ from typing import Any, Dict, List, Optional
 
 class Goal:
     """Represents a single improvement goal."""
-    def __init__(self, goal_id: str, description: str, status: str = "pending"):
+    def __init__(self, goal_id: str, description: str, status: str = "pending", 
+                 priority: str = "medium", metadata: Optional[Dict[str, Any]] = None):
         self.goal_id = goal_id
         self.description = description
         self.status = status
+        self.priority = priority
+        self.metadata = metadata or {}
 
     def to_dict(self) -> Dict[str, Any]:
-        return {"id": self.goal_id, "description": self.description, "status": self.status}
+        return {
+            "id": self.goal_id, 
+            "description": self.description, 
+            "status": self.status,
+            "priority": self.priority,
+            "metadata": self.metadata
+        }
 
 class GoalManager:
     """Manages the loading, serving, and tracking of improvement goals."""

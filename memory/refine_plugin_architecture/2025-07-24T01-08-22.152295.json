@@ -1,0 +1,20 @@
+{
+  "cycle": null,
+  "goal_id": "refine_plugin_architecture",
+  "description": "Refine the plugin architecture to make it more extensible and easier to add new capabilities.",
+  "current_code": "# File: src/ai_self_ext_engine/core/plugin.py\nfrom abc import abstractmethod\nfrom typing import Any, Optional, Protocol # Import Protocol\n\nclass Plugin(Protocol): # Change to Protocol\n    \"\"\"\n    Protocol for all plugins in the self-extending engine.\n    Plugins provide specific capabilities, such as language support or tool integration.\n    \"\"\"\n    @abstractmethod\n    def detect(self, code: str) -> bool:\n        \"\"\"\n        Detects if the plugin is applicable to the given code.\n        \"\"\"\n        pass\n\n    @abstractmethod\n    def execute(self, command: str, **kwargs) -> Any:\n        \"\"\"\n        Executes a command specific to the plugin's capability.\n        \"\"\"\n        pass\n\n    @abstractmethod\n    def test(self, code: str, tests: Optional[str] = None) -> Any:\n        \"\"\"\n        Runs tests for the given code using the plugin's testing framework.\n        \"\"\"\n        pass\n\n",
+  "todos": [
+    {
+      "file_path": "src/ai_self_ext_engine/core/plugin.py",
+      "change_type": "modify",
+      "description": "Refactor the base Plugin class to include abstract methods for declaring plugin capabilities and a standardized execution interface, making it easier to integrate diverse plugin functionalities.",
+      "line_start": 1,
+      "line_end": 100
+    }
+  ],
+  "patch": "--- a/src/ai_self_ext_engine/core/plugin.py\n+++ b/src/ai_self_ext_engine/core/plugin.py\n@@ -1,30 +1,41 @@\n from abc import abstractmethod\n-from typing import Any, Optional, Protocol # Import Protocol\n+from typing import Any, Dict, Set, Protocol\n \n-class Plugin(Protocol): # Change to Protocol\n+class Plugin(Protocol):\n     \"\"\"\n     Protocol for all plugins in the self-extending engine.\n     Plugins provide specific capabilities, such as language support or tool integration.\n     \"\"\"\n     @abstractmethod\n+    def get_capabilities(self) -> Set[str]:\n+        \"\"\"\n+        Declares the set of capabilities (commands/actions) this plugin can perform.\n+        Examples: 'code_generation', 'code_analysis', 'run_tests', 'deploy'.\n+        \"\"\"\n+        pass\n+\n+    @abstractmethod\n+    def execute(self, capability_name: str, arguments: Dict[str, Any]) -> Any:\n+        \"\"\"\n+        Executes a specific capability of the plugin.\n+        The `capability_name` must be one of the capabilities declared by `get_capabilities()`.\n+        `arguments` is a dictionary of parameters required for the specific capability.\n+        \"\"\"\n+        pass\n+\n+    @abstractmethod\n     def detect(self, code: str) -> bool:\n         \"\"\"\n-        Detects if the plugin is applicable to the given code.\n+        Detects if the plugin is applicable to the given code for general processing.\n+        This is separate from specific capabilities and determines if the plugin\n+        should be considered for a given code context.\n         \"\"\"\n         pass\n-\n-    @abstractmethod\n-    def execute(self, command: str, **kwargs) -> Any:\n-        \"\"\"\n-        Executes a command specific to the plugin's capability.\n-        \"\"\"\n-        pass\n-\n-    @abstractmethod\n-    def test(self, code: str, tests: Optional[str] = None) -> Any:\n-        \"\"\"\n-        Runs tests for the given code using the plugin's testing framework.\n-        \"\"\"\n-        pass",
+  "test_results": null,
+  "accepted": false,
+  "should_abort": true,
+  "metadata": {}
+}

@@ -70,10 +70,7 @@ class ProblemIdentificationRole(Role):
                 self.config.model.model_name, prompt=prompt
             )
 
-            logger.debug(
-                "Raw LLM response for ProblemIdentificationRole: %s",
-                response_text,
-            )
+            logger.debug("Raw LLM response for ProblemIdentificationRole: %s", response_text)
 
             # Attempt to parse JSON output
             try:
@@ -81,27 +78,31 @@ class ProblemIdentificationRole(Role):
                 # Attempt to extract if present.
                 if response_text.strip().startswith("```json"):
                     response_text = response_text.strip()[7:-3].strip() # Remove ```json\n and \n```
+                parsed_todo_data = json.loads(response_text)
                 
+                # Validate against Todo schema more rigorously
+                if not isinstance(parsed_todo_data, dict):
+                    raise ValueError("Parsed output is not a dictionary.")
                 parsed_todo_data = json.loads(response_text)
 
                 # Validate against Todo schema more rigorously
                 if not isinstance(parsed_todo_data, dict):
                     raise ValueError("Parsed output is not a dictionary.")
-                
+
                 # Explicitly check and cast types for critical fields
                 file_path = parsed_todo_data.get("file_path")
                 if not isinstance(file_path, str):
                     raise ValueError(
                         "'file_path' is missing or not a string."
                     )
-                    
+
                 change_type = parsed_todo_data.get("change_type")
                 if (
                     not isinstance(change_type, str)
                     or change_type not in ["add", "modify", "delete"]
                 ):
                     raise ValueError("'change_type' is missing or invalid.")
-                
+
                 description = parsed_todo_data.get("description")
                 if not isinstance(description, str):
                     raise ValueError(
@@ -113,21 +114,23 @@ class ProblemIdentificationRole(Role):
                     "change_type": change_type,
                     "description": description,
                 }
-                
+
                 if "line_start" in parsed_todo_data:
                     line_start = parsed_todo_data["line_start"]
-                    if not isinstance(line_start, int):
+                    if line_start is not None and not isinstance(line_start, int):
                         raise ValueError(
                             "'line_start' is present but not an integer."
                         )
-                    todo_item["line_start"] = line_start
+                    if line_start is not None:
+                        todo_item["line_start"] = line_start
                 if "line_end" in parsed_todo_data:
                     line_end = parsed_todo_data["line_end"]
-                    if not isinstance(line_end, int):
+                    if line_end is not None and not isinstance(line_end, int):
                         raise ValueError(
                             "'line_end' is present but not an integer."
                         )
-                    todo_item["line_end"] = line_end
+                    if line_end is not None:
+                        todo_item["line_end"] = line_end
 
                 excluded_patterns = [
                     r"create empty `__init__.py`",
@@ -147,19 +150,14 @@ class ProblemIdentificationRole(Role):
                 ):
                     context.todos = [todo_item]
                     logger.info("Identified todo: %s", todo_item)
+                    # Continue to next role (don't abort)
                 else:
                     context.todos = []
                     logger.info(
                         "Excluded identified todo due to matching exclusion "
                         "pattern."
                     )
-
-            except json.JSONDecodeError:
-                logger.error(
-                    "Failed to parse LLM response as JSON. Response: %s",
-                    response_text,
-                )
-                context.should_abort = True
+                    context.should_abort = True
             except ValueError as ve:
                 logger.error(
                     "Invalid Todo schema: %s. Response: %s",

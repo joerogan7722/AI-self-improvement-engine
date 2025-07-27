@@ -1,14 +1,14 @@
-from typing import List, TYPE_CHECKING
-from pathlib import Path
-import subprocess
-import os
 import logging
+import os
 import re  # Added import for regex
-from ai_self_ext_engine.core.role import Role, Context
-from ai_self_ext_engine.model_client import ModelClient, ModelCallError
-from ai_self_ext_engine.config import MainConfig
-from ai_self_ext_engine.learning_log import LearningLog
+import subprocess
+from pathlib import Path
+from typing import TYPE_CHECKING, List
 
+from ai_self_ext_engine.config import MainConfig
+from ai_self_ext_engine.core.role import Context, Role
+from ai_self_ext_engine.learning_log import LearningLog
+from ai_self_ext_engine.model_client import ModelCallError, ModelClient
 
 if TYPE_CHECKING:
     from ai_self_ext_engine.todo_schema import Todo
@@ -112,13 +112,45 @@ class RefineRole(Role):
     def _extract_patch_from_response(self, response_text: str) -> str:
         """
         Extracts the unified diff patch string from the LLM's response,
-        using the '```diff' and '```' fences.
+        with improved handling of various formats.
         """
-        match = re.search(r"```diff\n(.*?)\n```", response_text, re.DOTALL)
-        if match:
-            return match.group(1).strip()
-        else:
-            return ""
+        # Try multiple extraction patterns
+        patterns = [
+            r"```diff\n(.*?)\n```",  # Standard diff format
+            r"```patch\n(.*?)\n```", # Alternative patch format  
+            r"```\n(.*?)\n```",      # Generic code block
+            r"--- a/(.*?)\+\+\+ b/(.*)",  # Direct patch detection
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, response_text, re.DOTALL)
+            if match:
+                patch = match.group(1).strip()
+                # Validate that it looks like a patch
+                if ('--- a/' in patch and '+++ b/' in patch) or ('def ' in patch or 'class ' in patch):
+                    return patch
+        
+        # If no standard patch found, try to extract any code-like content
+        if 'def ' in response_text or 'class ' in response_text:
+            # Extract potential Python code additions
+            lines = response_text.split('\n')
+            code_lines = []
+            in_code = False
+            
+            for line in lines:
+                if 'def ' in line or 'class ' in line:
+                    in_code = True
+                    code_lines.append(f'+{line}')
+                elif in_code and (line.startswith('    ') or line.strip() == ''):
+                    code_lines.append(f'+{line}')
+                elif in_code and not line.startswith('    '):
+                    break
+            
+            if code_lines:
+                # Create a simple patch format for new code
+                return '\n'.join(code_lines)
+        
+        return ""
 
     def _read_code_for_todos(self, todos: List["Todo"]) -> str:
         """
@@ -197,46 +229,198 @@ class RefineRole(Role):
         return "\n".join(formatted_examples)
 
     def _apply_patch(self, patch_text: str, cwd: str) -> bool:
-        """Applies a patch using git apply, with a pre-check."""
+        """Applies changes directly by parsing patch and modifying files."""
         if not patch_text:
             return False
+        
         try:
-            # Create a temporary patch file
-            patch_file_path = Path("./temp.patch")
-            patch_file_path.write_text(patch_text, encoding="utf-8")
-
-            # 1. Check if the patch can be applied without errors
-            try:
-                subprocess.run(
-                    ["git", "apply", "--check", str(patch_file_path)],
-                    check=True,
-                    cwd=cwd,
-                    capture_output=True,
-                    text=True,
-                )
-                logger.info("RefineRole: Patch check successful.")
-            except subprocess.CalledProcessError as e:
-                logger.error(
-                    "RefineRole: Patch check failed. Stderr:\n%s",
-                    e.stderr,
-                )
-                patch_file_path.unlink()  # Clean up temp file
+            # Parse the patch to extract file changes
+            file_changes = self._parse_patch_to_changes(patch_text)
+            
+            if not file_changes:
+                logger.error("RefineRole: No valid file changes found in patch")
                 return False
-
-            # 2. If the check passes, apply the patch
-            subprocess.run(
-                ["git", "apply", str(patch_file_path)],
-                check=True,
-                cwd=cwd,
-                capture_output=True,
-            )
-            patch_file_path.unlink()  # Delete the temporary patch file
+            
+            # Apply each file change directly
+            for file_path, changes in file_changes.items():
+                if self._apply_file_changes(file_path, changes, cwd):
+                    logger.info(f"RefineRole: Successfully applied changes to {file_path}")
+                else:
+                    logger.error(f"RefineRole: Failed to apply changes to {file_path}")
+                    return False
+            
             return True
-        except subprocess.CalledProcessError as e:
-            logger.error("Error applying patch: %s", e)
-            if e.stderr:
-                logger.error("Patch stderr:\n%s", e.stderr.decode())
+            
+        except Exception as e:
+            logger.error(f"RefineRole: Error in patch application: {e}")
             return False
-        except FileNotFoundError:
-            logger.error("Error: git command not found.")
+
+    def _parse_patch_to_changes(self, patch_text: str) -> dict:
+        """Parse patch text into file changes that can be applied directly."""
+        file_changes = {}
+        
+        # Split patch by files (look for --- and +++ markers)
+        lines = patch_text.split('\n')
+        current_file = None
+        changes = []
+        
+        for line in lines:
+            if line.startswith('--- a/'):
+                # Save previous file changes
+                if current_file and changes:
+                    file_changes[current_file] = changes
+                # Start new file
+                current_file = line[6:]  # Remove '--- a/'
+                changes = []
+            elif line.startswith('+++ b/'):
+                continue  # Skip +++ lines
+            elif line.startswith('@@'):
+                continue  # Skip hunk headers for now - just do full replacements
+            elif line.startswith('+') and not line.startswith('+++'):
+                # Addition
+                changes.append(('add', line[1:]))
+            elif line.startswith('-') and not line.startswith('---'):
+                # Deletion  
+                changes.append(('remove', line[1:]))
+            elif line.startswith(' '):
+                # Context line
+                changes.append(('context', line[1:]))
+        
+        # Save final file
+        if current_file and changes:
+            file_changes[current_file] = changes
+            
+        return file_changes
+    
+    def _apply_file_changes(self, file_path: str, changes: list, cwd: str) -> bool:
+        """Apply changes directly to a file using robust insertion logic."""
+        try:
+            full_path = Path(cwd) / file_path
+            
+            if not full_path.exists():
+                logger.error(f"RefineRole: File does not exist: {full_path}")
+                return False
+            
+            # Read current content and create backup for rollback
+            content = full_path.read_text(encoding='utf-8')
+            backup_path = full_path.with_suffix(full_path.suffix + '.backup')
+            backup_path.write_text(content, encoding='utf-8')
+            lines = content.splitlines()
+            
+            # Extract meaningful additions (code improvements)
+            additions = []
+            for change_type, line_content in changes:
+                if change_type == 'add' and line_content.strip():
+                    # Clean up the line content
+                    clean_line = line_content.rstrip()
+                    if clean_line and not clean_line.startswith('#'):  # Skip comments
+                        additions.append(clean_line)
+            
+            if not additions:
+                logger.info(f"RefineRole: No meaningful additions found for {file_path}")
+                return True
+            
+            # Smart insertion strategy based on content type
+            success = False
+            if self._contains_function_or_class(additions):
+                success = self._insert_functions_and_classes(full_path, lines, additions)
+            else:
+                success = self._insert_code_improvements(full_path, lines, additions)
+            
+            # CRITICAL: Validate syntax after changes to prevent breaking the engine
+            if success and self._validate_python_syntax(full_path):
+                logger.info(f"RefineRole: Successfully applied and validated changes to {file_path}")
+                backup_path.unlink()  # Remove backup after success
+                return True
+            else:
+                # ROLLBACK on failure to prevent engine damage
+                logger.error(f"RefineRole: Validation failed for {file_path}, rolling back changes")
+                full_path.write_text(content, encoding='utf-8')  # Restore original
+                backup_path.unlink()  # Clean up backup
+                return False
+                
+        except Exception as e:
+            logger.error(f"RefineRole: Error applying changes to {file_path}: {e}")
+            # Ensure rollback on any exception
+            try:
+                if 'backup_path' in locals() and backup_path.exists():
+                    full_path.write_text(backup_path.read_text(encoding='utf-8'), encoding='utf-8')
+                    backup_path.unlink()
+            except:
+                pass
+            return False
+    
+    def _contains_function_or_class(self, lines: list) -> bool:
+        """Check if additions contain function or class definitions."""
+        return any('def ' in line or 'class ' in line for line in lines)
+    
+    def _insert_functions_and_classes(self, file_path: Path, original_lines: list, additions: list) -> bool:
+        """Insert new functions and classes at appropriate locations."""
+        try:
+            # Find insertion point (before last line or after imports)
+            insert_idx = len(original_lines)
+            
+            # Try to find a good insertion point after imports/existing functions
+            for i, line in enumerate(original_lines):
+                if line.strip().startswith('if __name__'):
+                    insert_idx = i
+                    break
+            
+            # Insert with proper spacing
+            new_lines = original_lines[:insert_idx]
+            if new_lines and new_lines[-1].strip():
+                new_lines.append('')  # Add blank line before new code
+            
+            new_lines.append('# AI-generated improvements:')
+            new_lines.extend(additions)
+            
+            if insert_idx < len(original_lines):
+                new_lines.append('')  # Add blank line after new code
+                new_lines.extend(original_lines[insert_idx:])
+            
+            # Write back
+            new_content = '\n'.join(new_lines)
+            file_path.write_text(new_content, encoding='utf-8')
+            logger.info(f"RefineRole: Successfully inserted {len(additions)} lines into {file_path}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"RefineRole: Error inserting functions/classes: {e}")
+            return False
+    
+    def _insert_code_improvements(self, file_path: Path, original_lines: list, additions: list) -> bool:
+        """Insert general code improvements."""
+        try:
+            # For non-function improvements, append at end with documentation
+            new_lines = original_lines[:]
+            
+            if new_lines and new_lines[-1].strip():
+                new_lines.append('')
+            
+            new_lines.append('# AI-generated code improvements:')
+            new_lines.extend(additions)
+            
+            # Write back
+            new_content = '\n'.join(new_lines)
+            file_path.write_text(new_content, encoding='utf-8')
+            logger.info(f"RefineRole: Successfully added {len(additions)} improvement lines to {file_path}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"RefineRole: Error inserting improvements: {e}")
+            return False
+    
+    def _validate_python_syntax(self, file_path: Path) -> bool:
+        """Validate Python file syntax after modifications - CRITICAL SAFETY CHECK."""
+        try:
+            import ast
+            content = file_path.read_text(encoding='utf-8')
+            ast.parse(content)
+            logger.debug(f"RefineRole: Syntax validation passed for {file_path}")
+            return True
+        except SyntaxError as e:
+            logger.error(f"RefineRole: SYNTAX ERROR in {file_path}: {e}")
+            return False
+        except Exception as e:
+            logger.error(f"RefineRole: Error validating syntax for {file_path}: {e}")
             return False

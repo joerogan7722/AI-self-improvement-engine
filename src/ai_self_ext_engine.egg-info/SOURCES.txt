@@ -22,10 +22,14 @@ src/ai_self_ext_engine/core/__init__.py
 src/ai_self_ext_engine/core/engine.py
 src/ai_self_ext_engine/core/plugin.py
 src/ai_self_ext_engine/core/role.py
+src/ai_self_ext_engine/core/role_orchestrator.py
 src/ai_self_ext_engine/plugins/__init__.py
 src/ai_self_ext_engine/plugins/python/PythonPlugin.py
 src/ai_self_ext_engine/plugins/python/__init__.py
 src/ai_self_ext_engine/roles/__init__.py
+src/ai_self_ext_engine/roles/enhanced_refine.py
+src/ai_self_ext_engine/roles/goal_generation.py
+src/ai_self_ext_engine/roles/mcp_enhanced_role.py
 src/ai_self_ext_engine/roles/problem_identification.py
 src/ai_self_ext_engine/roles/refine.py
 src/ai_self_ext_engine/roles/self_review.py

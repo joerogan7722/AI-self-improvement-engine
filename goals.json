@@ -3,22 +3,711 @@
     {
       "id": "full_cycle_test",
       "description": "Run a full critique-refine-test-self-review cycle to verify end-to-end functionality of the refactored engine.",
-      "status": "pending"
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {}
     },
     {
       "id": "refine_plugin_architecture",
       "description": "Refine the plugin architecture to make it more extensible and easier to add new capabilities.",
-      "status": "pending"
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {}
     },
     {
       "id": "explore_parallel_execution",
       "description": "Investigate the possibility of executing independent goals in parallel to improve performance.",
-      "status": "pending"
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {}
     },
     {
       "id": "adopt_dependency_management_tool",
       "description": "Adopt a dependency management tool (e.g., poetry or pip-tools) to manage dependencies more effectively.",
-      "status": "pending"
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {}
+    },
+    {
+      "id": "auto_goal_1",
+      "description": "Improve testing: Test coverage analysis and improvement needed",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "testing",
+          "priority": "high",
+          "description": "Test coverage analysis and improvement needed",
+          "estimated_impact": "Increased reliability and confidence in changes",
+          "suggested_approach": "Implement comprehensive test suite with pytest",
+          "files_involved": [
+            "New test files needed"
+          ]
+        },
+        "suggested_approach": "Implement comprehensive test suite with pytest",
+        "estimated_impact": "Increased reliability and confidence in changes"
+      }
+    },
+    {
+      "id": "auto_goal_2",
+      "description": "Improve architecture: Plugin architecture and parallel processing improvements",
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "architecture",
+          "priority": "medium",
+          "description": "Plugin architecture and parallel processing improvements",
+          "estimated_impact": "Enhanced extensibility and performance",
+          "suggested_approach": "Implement async operations and dynamic plugin discovery",
+          "files_involved": [
+            "core/engine.py",
+            "core/plugin.py"
+          ]
+        },
+        "suggested_approach": "Implement async operations and dynamic plugin discovery",
+        "estimated_impact": "Enhanced extensibility and performance"
+      }
+    },
+    {
+      "id": "auto_goal_1",
+      "description": "Improve refactoring: Found 1 code smells requiring attention",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "refactoring",
+          "priority": "high",
+          "description": "Found 1 code smells requiring attention",
+          "estimated_impact": "Reduced complexity and improved maintainability",
+          "suggested_approach": "Break down large functions into smaller, focused functions",
+          "files_involved": [
+            "Long function"
+          ]
+        },
+        "suggested_approach": "Break down large functions into smaller, focused functions",
+        "estimated_impact": "Reduced complexity and improved maintainability"
+      }
+    },
+    {
+      "id": "auto_goal_2",
+      "description": "Improve testing: Test coverage analysis and improvement needed",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "testing",
+          "priority": "high",
+          "description": "Test coverage analysis and improvement needed",
+          "estimated_impact": "Increased reliability and confidence in changes",
+          "suggested_approach": "Implement comprehensive test suite with pytest",
+          "files_involved": [
+            "New test files needed"
+          ]
+        },
+        "suggested_approach": "Implement comprehensive test suite with pytest",
+        "estimated_impact": "Increased reliability and confidence in changes"
+      }
+    },
+    {
+      "id": "auto_goal_3",
+      "description": "Improve architecture: Plugin architecture and parallel processing improvements",
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "architecture",
+          "priority": "medium",
+          "description": "Plugin architecture and parallel processing improvements",
+          "estimated_impact": "Enhanced extensibility and performance",
+          "suggested_approach": "Implement async operations and dynamic plugin discovery",
+          "files_involved": [
+            "core/engine.py",
+            "core/plugin.py"
+          ]
+        },
+        "suggested_approach": "Implement async operations and dynamic plugin discovery",
+        "estimated_impact": "Enhanced extensibility and performance"
+      }
+    },
+    {
+      "id": "auto_goal_1",
+      "description": "Improve refactoring: Found 1 code smells requiring attention",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "refactoring",
+          "priority": "high",
+          "description": "Found 1 code smells requiring attention",
+          "estimated_impact": "Reduced complexity and improved maintainability",
+          "suggested_approach": "Break down large functions into smaller, focused functions",
+          "files_involved": [
+            "Long function"
+          ]
+        },
+        "suggested_approach": "Break down large functions into smaller, focused functions",
+        "estimated_impact": "Reduced complexity and improved maintainability"
+      }
+    },
+    {
+      "id": "auto_goal_2",
+      "description": "Improve testing: Test coverage analysis and improvement needed",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "testing",
+          "priority": "high",
+          "description": "Test coverage analysis and improvement needed",
+          "estimated_impact": "Increased reliability and confidence in changes",
+          "suggested_approach": "Implement comprehensive test suite with pytest",
+          "files_involved": [
+            "New test files needed"
+          ]
+        },
+        "suggested_approach": "Implement comprehensive test suite with pytest",
+        "estimated_impact": "Increased reliability and confidence in changes"
+      }
+    },
+    {
+      "id": "auto_goal_3",
+      "description": "Improve architecture: Plugin architecture and parallel processing improvements",
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "architecture",
+          "priority": "medium",
+          "description": "Plugin architecture and parallel processing improvements",
+          "estimated_impact": "Enhanced extensibility and performance",
+          "suggested_approach": "Implement async operations and dynamic plugin discovery",
+          "files_involved": [
+            "core/engine.py",
+            "core/plugin.py"
+          ]
+        },
+        "suggested_approach": "Implement async operations and dynamic plugin discovery",
+        "estimated_impact": "Enhanced extensibility and performance"
+      }
+    },
+    {
+      "id": "auto_goal_1",
+      "description": "Improve refactoring: Found 1 code smells requiring attention",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "refactoring",
+          "priority": "high",
+          "description": "Found 1 code smells requiring attention",
+          "estimated_impact": "Reduced complexity and improved maintainability",
+          "suggested_approach": "Break down large functions into smaller, focused functions",
+          "files_involved": [
+            "Long function"
+          ]
+        },
+        "suggested_approach": "Break down large functions into smaller, focused functions",
+        "estimated_impact": "Reduced complexity and improved maintainability"
+      }
+    },
+    {
+      "id": "auto_goal_2",
+      "description": "Improve testing: Test coverage analysis and improvement needed",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "testing",
+          "priority": "high",
+          "description": "Test coverage analysis and improvement needed",
+          "estimated_impact": "Increased reliability and confidence in changes",
+          "suggested_approach": "Implement comprehensive test suite with pytest",
+          "files_involved": [
+            "New test files needed"
+          ]
+        },
+        "suggested_approach": "Implement comprehensive test suite with pytest",
+        "estimated_impact": "Increased reliability and confidence in changes"
+      }
+    },
+    {
+      "id": "auto_goal_3",
+      "description": "Improve performance: High complexity score (71.2) suggests optimization opportunities",
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "performance",
+          "priority": "medium",
+          "description": "High complexity score (71.2) suggests optimization opportunities",
+          "estimated_impact": "Improved runtime performance and resource usage",
+          "suggested_approach": "Profile code and optimize bottlenecks",
+          "files_involved": [
+            "Performance-critical modules"
+          ]
+        },
+        "suggested_approach": "Profile code and optimize bottlenecks",
+        "estimated_impact": "Improved runtime performance and resource usage"
+      }
+    },
+    {
+      "id": "auto_goal_1",
+      "description": "Improve refactoring: Found 1 code smells requiring attention",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "refactoring",
+          "priority": "high",
+          "description": "Found 1 code smells requiring attention",
+          "estimated_impact": "Reduced complexity and improved maintainability",
+          "suggested_approach": "Break down large functions into smaller, focused functions",
+          "files_involved": [
+            "Long function"
+          ]
+        },
+        "suggested_approach": "Break down large functions into smaller, focused functions",
+        "estimated_impact": "Reduced complexity and improved maintainability"
+      }
+    },
+    {
+      "id": "auto_goal_2",
+      "description": "Improve testing: Test coverage analysis and improvement needed",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "testing",
+          "priority": "high",
+          "description": "Test coverage analysis and improvement needed",
+          "estimated_impact": "Increased reliability and confidence in changes",
+          "suggested_approach": "Implement comprehensive test suite with pytest",
+          "files_involved": [
+            "New test files needed"
+          ]
+        },
+        "suggested_approach": "Implement comprehensive test suite with pytest",
+        "estimated_impact": "Increased reliability and confidence in changes"
+      }
+    },
+    {
+      "id": "auto_goal_3",
+      "description": "Improve performance: High complexity score (71.2) suggests optimization opportunities",
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "performance",
+          "priority": "medium",
+          "description": "High complexity score (71.2) suggests optimization opportunities",
+          "estimated_impact": "Improved runtime performance and resource usage",
+          "suggested_approach": "Profile code and optimize bottlenecks",
+          "files_involved": [
+            "Performance-critical modules"
+          ]
+        },
+        "suggested_approach": "Profile code and optimize bottlenecks",
+        "estimated_impact": "Improved runtime performance and resource usage"
+      }
+    },
+    {
+      "id": "auto_goal_1",
+      "description": "Improve refactoring: Found 1 code smells requiring attention",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "refactoring",
+          "priority": "high",
+          "description": "Found 1 code smells requiring attention",
+          "estimated_impact": "Reduced complexity and improved maintainability",
+          "suggested_approach": "Break down large functions into smaller, focused functions",
+          "files_involved": [
+            "Long function"
+          ]
+        },
+        "suggested_approach": "Break down large functions into smaller, focused functions",
+        "estimated_impact": "Reduced complexity and improved maintainability"
+      }
+    },
+    {
+      "id": "auto_goal_2",
+      "description": "Improve testing: Test coverage analysis and improvement needed",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "testing",
+          "priority": "high",
+          "description": "Test coverage analysis and improvement needed",
+          "estimated_impact": "Increased reliability and confidence in changes",
+          "suggested_approach": "Implement comprehensive test suite with pytest",
+          "files_involved": [
+            "New test files needed"
+          ]
+        },
+        "suggested_approach": "Implement comprehensive test suite with pytest",
+        "estimated_impact": "Increased reliability and confidence in changes"
+      }
+    },
+    {
+      "id": "auto_goal_3",
+      "description": "Improve architecture: Plugin architecture and parallel processing improvements",
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "architecture",
+          "priority": "medium",
+          "description": "Plugin architecture and parallel processing improvements",
+          "estimated_impact": "Enhanced extensibility and performance",
+          "suggested_approach": "Implement async operations and dynamic plugin discovery",
+          "files_involved": [
+            "core/engine.py",
+            "core/plugin.py"
+          ]
+        },
+        "suggested_approach": "Implement async operations and dynamic plugin discovery",
+        "estimated_impact": "Enhanced extensibility and performance"
+      }
+    },
+    {
+      "id": "auto_goal_1",
+      "description": "Improve refactoring: Found 1 code smells requiring attention",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "refactoring",
+          "priority": "high",
+          "description": "Found 1 code smells requiring attention",
+          "estimated_impact": "Reduced complexity and improved maintainability",
+          "suggested_approach": "Break down large functions into smaller, focused functions",
+          "files_involved": [
+            "Long function"
+          ]
+        },
+        "suggested_approach": "Break down large functions into smaller, focused functions",
+        "estimated_impact": "Reduced complexity and improved maintainability"
+      }
+    },
+    {
+      "id": "auto_goal_2",
+      "description": "Improve testing: Test coverage analysis and improvement needed",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "testing",
+          "priority": "high",
+          "description": "Test coverage analysis and improvement needed",
+          "estimated_impact": "Increased reliability and confidence in changes",
+          "suggested_approach": "Implement comprehensive test suite with pytest",
+          "files_involved": [
+            "New test files needed"
+          ]
+        },
+        "suggested_approach": "Implement comprehensive test suite with pytest",
+        "estimated_impact": "Increased reliability and confidence in changes"
+      }
+    },
+    {
+      "id": "auto_goal_3",
+      "description": "Improve architecture: Plugin architecture and parallel processing improvements",
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "architecture",
+          "priority": "medium",
+          "description": "Plugin architecture and parallel processing improvements",
+          "estimated_impact": "Enhanced extensibility and performance",
+          "suggested_approach": "Implement async operations and dynamic plugin discovery",
+          "files_involved": [
+            "core/engine.py",
+            "core/plugin.py"
+          ]
+        },
+        "suggested_approach": "Implement async operations and dynamic plugin discovery",
+        "estimated_impact": "Enhanced extensibility and performance"
+      }
+    },
+    {
+      "id": "auto_goal_1",
+      "description": "Improve refactoring: Found 1 code smells requiring attention",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "refactoring",
+          "priority": "high",
+          "description": "Found 1 code smells requiring attention",
+          "estimated_impact": "Reduced complexity and improved maintainability",
+          "suggested_approach": "Break down large functions into smaller, focused functions",
+          "files_involved": [
+            "Long function"
+          ]
+        },
+        "suggested_approach": "Break down large functions into smaller, focused functions",
+        "estimated_impact": "Reduced complexity and improved maintainability"
+      }
+    },
+    {
+      "id": "auto_goal_2",
+      "description": "Improve testing: Test coverage analysis and improvement needed",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "testing",
+          "priority": "high",
+          "description": "Test coverage analysis and improvement needed",
+          "estimated_impact": "Increased reliability and confidence in changes",
+          "suggested_approach": "Implement comprehensive test suite with pytest",
+          "files_involved": [
+            "New test files needed"
+          ]
+        },
+        "suggested_approach": "Implement comprehensive test suite with pytest",
+        "estimated_impact": "Increased reliability and confidence in changes"
+      }
+    },
+    {
+      "id": "auto_goal_3",
+      "description": "Improve architecture: Plugin architecture and parallel processing improvements",
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "architecture",
+          "priority": "medium",
+          "description": "Plugin architecture and parallel processing improvements",
+          "estimated_impact": "Enhanced extensibility and performance",
+          "suggested_approach": "Implement async operations and dynamic plugin discovery",
+          "files_involved": [
+            "core/engine.py",
+            "core/plugin.py"
+          ]
+        },
+        "suggested_approach": "Implement async operations and dynamic plugin discovery",
+        "estimated_impact": "Enhanced extensibility and performance"
+      }
+    },
+    {
+      "id": "auto_goal_1",
+      "description": "Improve refactoring: Found 1 code smells requiring attention",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "refactoring",
+          "priority": "high",
+          "description": "Found 1 code smells requiring attention",
+          "estimated_impact": "Reduced complexity and improved maintainability",
+          "suggested_approach": "Break down large functions into smaller, focused functions",
+          "files_involved": [
+            "Long function"
+          ]
+        },
+        "suggested_approach": "Break down large functions into smaller, focused functions",
+        "estimated_impact": "Reduced complexity and improved maintainability"
+      }
+    },
+    {
+      "id": "auto_goal_2",
+      "description": "Improve testing: Test coverage analysis and improvement needed",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "testing",
+          "priority": "high",
+          "description": "Test coverage analysis and improvement needed",
+          "estimated_impact": "Increased reliability and confidence in changes",
+          "suggested_approach": "Implement comprehensive test suite with pytest",
+          "files_involved": [
+            "New test files needed"
+          ]
+        },
+        "suggested_approach": "Implement comprehensive test suite with pytest",
+        "estimated_impact": "Increased reliability and confidence in changes"
+      }
+    },
+    {
+      "id": "auto_goal_3",
+      "description": "Improve architecture: Plugin architecture and parallel processing improvements",
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "architecture",
+          "priority": "medium",
+          "description": "Plugin architecture and parallel processing improvements",
+          "estimated_impact": "Enhanced extensibility and performance",
+          "suggested_approach": "Implement async operations and dynamic plugin discovery",
+          "files_involved": [
+            "core/engine.py",
+            "core/plugin.py"
+          ]
+        },
+        "suggested_approach": "Implement async operations and dynamic plugin discovery",
+        "estimated_impact": "Enhanced extensibility and performance"
+      }
+    },
+    {
+      "id": "auto_goal_1",
+      "description": "Improve refactoring: Found 1 code smells requiring attention",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "refactoring",
+          "priority": "high",
+          "description": "Found 1 code smells requiring attention",
+          "estimated_impact": "Reduced complexity and improved maintainability",
+          "suggested_approach": "Break down large functions into smaller, focused functions",
+          "files_involved": [
+            "Long function"
+          ]
+        },
+        "suggested_approach": "Break down large functions into smaller, focused functions",
+        "estimated_impact": "Reduced complexity and improved maintainability"
+      }
+    },
+    {
+      "id": "auto_goal_2",
+      "description": "Improve testing: Test coverage analysis and improvement needed",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "testing",
+          "priority": "high",
+          "description": "Test coverage analysis and improvement needed",
+          "estimated_impact": "Increased reliability and confidence in changes",
+          "suggested_approach": "Implement comprehensive test suite with pytest",
+          "files_involved": [
+            "New test files needed"
+          ]
+        },
+        "suggested_approach": "Implement comprehensive test suite with pytest",
+        "estimated_impact": "Increased reliability and confidence in changes"
+      }
+    },
+    {
+      "id": "auto_goal_3",
+      "description": "Improve architecture: Plugin architecture and parallel processing improvements",
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "architecture",
+          "priority": "medium",
+          "description": "Plugin architecture and parallel processing improvements",
+          "estimated_impact": "Enhanced extensibility and performance",
+          "suggested_approach": "Implement async operations and dynamic plugin discovery",
+          "files_involved": [
+            "core/engine.py",
+            "core/plugin.py"
+          ]
+        },
+        "suggested_approach": "Implement async operations and dynamic plugin discovery",
+        "estimated_impact": "Enhanced extensibility and performance"
+      }
+    },
+    {
+      "id": "auto_goal_1",
+      "description": "Improve refactoring: Found 1 code smells requiring attention",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "refactoring",
+          "priority": "high",
+          "description": "Found 1 code smells requiring attention",
+          "estimated_impact": "Reduced complexity and improved maintainability",
+          "suggested_approach": "Break down large functions into smaller, focused functions",
+          "files_involved": [
+            "Long function"
+          ]
+        },
+        "suggested_approach": "Break down large functions into smaller, focused functions",
+        "estimated_impact": "Reduced complexity and improved maintainability"
+      }
+    },
+    {
+      "id": "auto_goal_2",
+      "description": "Improve testing: Test coverage analysis and improvement needed",
+      "status": "pending",
+      "priority": "high",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "testing",
+          "priority": "high",
+          "description": "Test coverage analysis and improvement needed",
+          "estimated_impact": "Increased reliability and confidence in changes",
+          "suggested_approach": "Implement comprehensive test suite with pytest",
+          "files_involved": [
+            "New test files needed"
+          ]
+        },
+        "suggested_approach": "Implement comprehensive test suite with pytest",
+        "estimated_impact": "Increased reliability and confidence in changes"
+      }
+    },
+    {
+      "id": "auto_goal_3",
+      "description": "Improve architecture: Plugin architecture and parallel processing improvements",
+      "status": "pending",
+      "priority": "medium",
+      "metadata": {
+        "auto_generated": true,
+        "opportunity": {
+          "area": "architecture",
+          "priority": "medium",
+          "description": "Plugin architecture and parallel processing improvements",
+          "estimated_impact": "Enhanced extensibility and performance",
+          "suggested_approach": "Implement async operations and dynamic plugin discovery",
+          "files_involved": [
+            "core/engine.py",
+            "core/plugin.py"
+          ]
+        },
+        "suggested_approach": "Implement async operations and dynamic plugin discovery",
+        "estimated_impact": "Enhanced extensibility and performance"
+      }
     }
   ]
 }

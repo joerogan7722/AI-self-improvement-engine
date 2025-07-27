@@ -1,0 +1,20 @@
+{
+  "cycle": null,
+  "goal_id": "refine_plugin_architecture",
+  "description": "Refine the plugin architecture to make it more extensible and easier to add new capabilities.",
+  "current_code": "# File: src/ai_self_ext_engine/core/plugin.py\nfrom abc import abstractmethod\nfrom typing import Any, Optional, Protocol # Import Protocol\n\nclass Plugin(Protocol): # Change to Protocol\n    \"\"\"\n    Protocol for all plugins in the self-extending engine.\n    Plugins provide specific capabilities, such as language support or tool integration.\n    \"\"\"\n    @abstractmethod\n    def detect(self, code: str) -> bool:\n        \"\"\"\n        Detects if the plugin is applicable to the given code.\n        \"\"\"\n        pass\n\n    @abstractmethod\n    def execute(self, command: str, **kwargs) -> Any:\n        \"\"\"\n        Executes a command specific to the plugin's capability.\n        \"\"\"\n        pass\n\n    @abstractmethod\n    def test(self, code: str, tests: Optional[str] = None) -> Any:\n        \"\"\"\n        Runs tests for the given code using the plugin's testing framework.\n        \"\"\"\n        pass\n\n",
+  "todos": [
+    {
+      "file_path": "src/ai_self_ext_engine/core/plugin.py",
+      "change_type": "modify",
+      "description": "Refactor the base Plugin class to define a more extensible API for new capabilities, enabling clearer registration and execution of plugin-defined actions.",
+      "line_start": 1,
+      "line_end": 100
+    }
+  ],
+  "patch": "--- a/src/ai_self_ext_engine/core/plugin.py\n+++ b/src/ai_self_ext_engine/core/plugin.py\n@@ -1,7 +1,19 @@\n from abc import abstractmethod\n-from typing import Any, Optional, Protocol # Import Protocol\n+from typing import Any, Callable, Dict, Optional, Protocol\n \n-class Plugin(Protocol): # Change to Protocol\n+class Plugin(Protocol):\n     \"\"\"\n     Protocol for all plugins in the self-extending engine.\n     Plugins provide specific capabilities, such as language support or tool integration.\n     \"\"\"\n+    @property\n+    @abstractmethod\n+    def capabilities(self) -> Dict[str, Callable[..., Any]]:\n+        \"\"\"\n+        A dictionary mapping capability names (strings) to callable methods\n+        or functions provided by the plugin. These capabilities define the\n+        specific actions or tools the plugin can perform.\n+        \"\"\"\n+        pass\n+\n     @abstractmethod\n     def detect(self, code: str) -> bool:\n         \"\"\"\n@@ -9,11 +21,15 @@\n         \"\"\"\n         pass\n \n     @abstractmethod\n-    def execute(self, command: str, **kwargs) -> Any:\n+    def execute(self, capability_name: str, *args, **kwargs) -> Any:\n         \"\"\"\n-        Executes a command specific to the plugin's capability.\n+        Executes a named capability provided by the plugin.\n+        This method acts as a dispatcher, looking up `capability_name`\n+        in the plugin's `capabilities` property and invoking the\n+        corresponding callable with `*args` and `**kwargs`.\n         \"\"\"\n         pass\n \n     @abstractmethod\n     def test(self, code: str, tests: Optional[str] = None) -> Any:\n         \"\"\"\n         Runs tests for the given code using the plugin's testing framework.",
+  "test_results": null,
+  "accepted": false,
+  "should_abort": true,
+  "metadata": {}
+}

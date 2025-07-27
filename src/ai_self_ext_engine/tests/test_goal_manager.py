@@ -39,7 +39,13 @@ def test_goal_creation():
 def test_goal_to_dict():
     """Test that Goal.to_dict returns the correct dictionary representation."""
     goal = Goal("test_id", "Test description", "completed")
-    expected_dict = {"id": "test_id", "description": "Test description", "status": "completed"}
+    expected_dict = {
+        "id": "test_id", 
+        "description": "Test description", 
+        "status": "completed",
+        "priority": "medium",  # Default value
+        "metadata": {}  # Default value
+    }
     assert goal.to_dict() == expected_dict
 
 def test_goal_manager_init_no_file(temp_goals_file, caplog):

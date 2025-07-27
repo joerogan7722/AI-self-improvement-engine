@@ -1,8 +1,11 @@
+import logging  # Import logging
 import os
-import logging # Import logging
 from typing import Any, Dict, List, Optional
-from google import genai
-from .config import ModelSectionConfig # Import ModelSectionConfig
+
+import google.generativeai as genai
+
+from .config import ModelSectionConfig  # Import ModelSectionConfig
+
 
 class ModelCallError(Exception):
     """Custom exception for errors during model calls."""
@@ -19,10 +22,11 @@ class ModelClient:
             api_key = os.environ.get(self.config.api_key_env)
             if not api_key:
                 raise ValueError(f"Environment variable '{self.config.api_key_env}' not set.")
-            self._client = genai.Client(api_key=api_key)
+            genai.configure(api_key=api_key)
+            self._configured = True
         except Exception as e:
-            self.logger.error("Error initializing Gemini client: %s", e)
-            raise ValueError(f"Error initializing Gemini client: {e}")
+            self.logger.error("Error configuring Gemini API: %s", e)
+            raise ValueError(f"Error configuring Gemini API: {e}")
 
     def call_model(
         self,
@@ -40,18 +44,15 @@ class ModelClient:
             return "DRY_RUN_RESPONSE"
 
         try:
-            # Construct contents based on system_prompt presence
-            contents = []
+            # Create model instance
+            model = genai.GenerativeModel(model_name)
+            
+            # Construct prompt with system prompt if provided
+            full_prompt = prompt
             if system_prompt:
-                contents.append({"role": "user", "parts": [{"text": system_prompt}]})
-                contents.append({"role": "model", "parts": [{"text": "Okay, I understand."}]}) # Standard response to system prompt
-            contents.append({"role": "user", "parts": [{"text": prompt}]})
+                full_prompt = f"System: {system_prompt}\n\nUser: {prompt}"
 
-            response = self._client.models.generate_content(
-                model=model_name, # Pass model_name as a keyword argument
-                contents=contents,
-                **kwargs # Pass any remaining kwargs directly to generate_content
-            )
+            response = model.generate_content(full_prompt, **kwargs)
             
             if response.text is None:
                 raise ModelCallError(f"Model '{model_name}' returned no text response.")

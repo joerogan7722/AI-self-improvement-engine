@@ -1,0 +1,18 @@
+{
+  "cycle": null,
+  "goal_id": "refine_plugin_architecture",
+  "description": "Refine the plugin architecture to make it more extensible and easier to add new capabilities.",
+  "current_code": null,
+  "todos": [
+    {
+      "file_path": "src/ai_self_ext_engine/core/plugin.py",
+      "change_type": "modify",
+      "description": "Refactor `ai_self_ext_engine/core/plugin.py` to define an Abstract Base Class (ABC) for plugins, including abstract methods for lifecycle management (e.g., `initialize`, `shutdown`) and a standardized way for plugins to declare or expose their capabilities, thereby enhancing the overall extensibility of the plugin architecture."
+    }
+  ],
+  "patch": null,
+  "test_results": null,
+  "accepted": false,
+  "should_abort": true,
+  "metadata": {}
+}

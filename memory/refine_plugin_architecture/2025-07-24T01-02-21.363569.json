@@ -1,0 +1,18 @@
+{
+  "cycle": null,
+  "goal_id": "refine_plugin_architecture",
+  "description": "Refine the plugin architecture to make it more extensible and easier to add new capabilities.",
+  "current_code": null,
+  "todos": [
+    {
+      "file_path": "src/ai_self_ext_engine/core/plugin.py",
+      "change_type": "modify",
+      "description": "Refactor the Plugin base class to include abstract methods or properties for standardized capability declaration and lifecycle management, enhancing extensibility for new plugin types."
+    }
+  ],
+  "patch": null,
+  "test_results": null,
+  "accepted": false,
+  "should_abort": true,
+  "metadata": {}
+}

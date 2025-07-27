@@ -28,3 +28,29 @@ roles:
     prompt_path: N/A # SelfReviewRole does not use a prompt template directly
 plugins: {}
 logging:
+  level: INFO
+  format: json
+  log_file: ./logs/engine.log
+"""
+
+# AI-generated code improvements:
+  # Explicitly list core runtime dependencies for internal validation and external tooling.
+  # This section can be used to ensure the environment has necessary packages.
+  runtime_dependencies:
+    - name: pyyaml
+      min_version: "6.0"
+    - name: pydantic
+      min_version: "2.0"
+    - name: requests
+      min_version: "2.31.0"
+    - name: tenacity
+      min_version: "8.2.3"
+    - name: python-dotenv
+      min_version: "1.0.0"
+    # Development/Tooling dependencies often used by roles
+    - name: black
+      min_version: "24.4.2"
+    - name: isort
+      min_version: "5.13.2"
+    - name: jinja2
+      min_version: "3.1.4"

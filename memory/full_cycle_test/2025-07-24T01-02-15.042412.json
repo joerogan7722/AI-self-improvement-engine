@@ -1,0 +1,18 @@
+{
+  "cycle": null,
+  "goal_id": "full_cycle_test",
+  "description": "Run a full critique-refine-test-self-review cycle to verify end-to-end functionality of the refactored engine.",
+  "current_code": null,
+  "todos": [
+    {
+      "file_path": "src/ai_self_ext_engine/core/engine.py",
+      "change_type": "modify",
+      "description": "Implement or refine the core orchestration logic within the engine to execute the full critique-refine-test-self-review cycle."
+    }
+  ],
+  "patch": null,
+  "test_results": null,
+  "accepted": false,
+  "should_abort": true,
+  "metadata": {}
+}
